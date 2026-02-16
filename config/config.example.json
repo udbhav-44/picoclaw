@@ -68,6 +68,19 @@
       "reconnect_interval": 5,
       "group_trigger_prefix": [],
       "allow_from": []
+    },
+    "email": {
+      "enabled": false,
+      "imap_server": "imap.gmail.com",
+      "imap_port": 993,
+      "imap_user": "your-email@gmail.com",
+      "imap_password": "your-app-password",
+      "smtp_server": "smtp.gmail.com",
+      "smtp_port": 587,
+      "smtp_user": "your-email@gmail.com",
+      "smtp_password": "your-app-password",
+      "poll_interval": 30,
+      "allow_from": ["allowed-sender@example.com"]
     }
   },
   "providers": {

@@ -2,17 +2,18 @@ package tools
 
 import (
 	"context"
+	"strings"
 
-	"github.com/sipeed/picoclaw/pkg/bus"
+	"github.com/sipeed/picoclaw/pkg/config"
 )
 
 type CheckMailTool struct {
-	bus *bus.MessageBus
+	config config.EmailConfig
 }
 
-func NewCheckMailTool(bus *bus.MessageBus) *CheckMailTool {
+func NewCheckMailTool(cfg config.EmailConfig) *CheckMailTool {
 	return &CheckMailTool{
-		bus: bus,
+		config: cfg,
 	}
 }
 
@@ -21,27 +22,45 @@ func (t *CheckMailTool) Name() string {
 }
 
 func (t *CheckMailTool) Description() string {
-	return "Manually check for new emails immediately. Use this when the user asks to check email."
+	return "Check for new emails and return them. This tool fetches recent unread emails from all accounts."
 }
 
 func (t *CheckMailTool) Parameters() map[string]interface{} {
 	return map[string]interface{}{
-		"type":       "object",
-		"properties": map[string]interface{}{},
-		"required":   []string{},
+		"type": "object",
+		"properties": map[string]interface{}{
+			"count": map[string]interface{}{
+				"type":        "integer",
+				"description": "Number of emails to fetch (default: 5)",
+			},
+		},
 	}
 }
 
 func (t *CheckMailTool) Execute(ctx context.Context, args map[string]interface{}) *ToolResult {
-	// Publish a command to the email channel via outbound bus
-	t.bus.PublishOutbound(bus.OutboundMessage{
-		Channel: "email",
-		ChatID:  "system", // Dummy ID to prevent empty recipient error if it falls through
-		Content: "CMD:CHECK",
-	})
+	// Delegate to ReadEmailTool
+	readTool := NewReadEmailTool(t.config)
 
-	return &ToolResult{
-		ForLLM:  "Initiated manual check for new emails. Any new emails will appear as messages shortly.",
-		ForUser: "Checking for new emails...",
+	// Default to unread only for "check"
+	readArgs := map[string]interface{}{
+		"unread_only": true,
+		"count":       5.0,
 	}
+
+	if c, ok := args["count"]; ok {
+		readArgs["count"] = c
+	}
+
+	result := readTool.Execute(ctx, readArgs)
+
+	// If no unread, try fetching latest 3 just to show something (optional, but "check" usually implies new)
+	if result.ForLLM == "" || strings.Contains(result.ForLLM, "No unread emails") {
+		// Fallback to fetch recent 3 if no unread, to confirm connection?
+		// No, user said "no mails came through", implies they expected new ones or just wanted to see *something*.
+		// But "check mail" usually means "sync and show new".
+		// Let's stick to unread.
+		return result
+	}
+
+	return result
 }

@@ -106,6 +106,10 @@ func createToolRegistry(workspace string, restrict bool, cfg *config.Config, msg
 	registry.Register(tools.NewSendEmailTool(cfg.Channels.Email))
 	registry.Register(tools.NewCheckMailTool(msgBus)) // Keep for background sync trigger if needed
 
+	// Developer tools
+	registry.Register(tools.NewGitHubTool(cfg.Tools.GitHub))
+	registry.Register(tools.NewSystemTool())
+
 	return registry
 }
 

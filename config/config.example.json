@@ -14,7 +14,9 @@
       "enabled": false,
       "token": "YOUR_TELEGRAM_BOT_TOKEN",
       "proxy": "",
-      "allow_from": ["YOUR_USER_ID"]
+      "allow_from": [
+        "YOUR_USER_ID"
+      ]
     },
     "discord": {
       "enabled": false,
@@ -80,7 +82,9 @@
       "smtp_user": "your-email@gmail.com",
       "smtp_password": "your-app-password",
       "poll_interval": 30,
-      "allow_from": ["allowed-sender@example.com"]
+      "allow_from": [
+        "allowed-sender@example.com"
+      ]
     }
   },
   "providers": {
@@ -132,6 +136,10 @@
         "api_key": "YOUR_BRAVE_API_KEY",
         "max_results": 5
       }
+    },
+    "github": {
+      "enabled": false,
+      "token": "YOUR_GITHUB_TOKEN"
     }
   },
   "heartbeat": {

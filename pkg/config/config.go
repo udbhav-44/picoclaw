@@ -227,7 +227,13 @@ type WebToolsConfig struct {
 }
 
 type ToolsConfig struct {
-	Web WebToolsConfig `json:"web"`
+	Web    WebToolsConfig `json:"web"`
+	GitHub GitHubConfig   `json:"github"`
+}
+
+type GitHubConfig struct {
+	Enabled bool   `json:"enabled" env:"PICOCLAW_TOOLS_GITHUB_ENABLED"`
+	Token   string `json:"token" env:"PICOCLAW_TOOLS_GITHUB_TOKEN"`
 }
 
 func DefaultConfig() *Config {
@@ -350,6 +356,10 @@ func DefaultConfig() *Config {
 					Enabled:    true,
 					MaxResults: 5,
 				},
+			},
+			GitHub: GitHubConfig{
+				Enabled: false,
+				Token:   "",
 			},
 		},
 		Heartbeat: HeartbeatConfig{

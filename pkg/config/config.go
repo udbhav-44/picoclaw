@@ -227,7 +227,14 @@ type WebToolsConfig struct {
 }
 
 type ToolsConfig struct {
-	Web WebToolsConfig `json:"web"`
+	Web      WebToolsConfig `json:"web"`
+	Calendar CalendarConfig `json:"calendar"`
+}
+
+type CalendarConfig struct {
+	Enabled         bool   `json:"enabled" env:"PICOCLAW_TOOLS_CALENDAR_ENABLED"`
+	CredentialsJSON string `json:"credentials_json" env:"PICOCLAW_TOOLS_CALENDAR_CREDENTIALS"`
+	CalendarID      string `json:"calendar_id" env:"PICOCLAW_TOOLS_CALENDAR_ID"`
 }
 
 func DefaultConfig() *Config {
@@ -350,6 +357,9 @@ func DefaultConfig() *Config {
 					Enabled:    true,
 					MaxResults: 5,
 				},
+			},
+			Calendar: CalendarConfig{
+				Enabled: false,
 			},
 		},
 		Heartbeat: HeartbeatConfig{
